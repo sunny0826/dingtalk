@@ -2,12 +2,18 @@ package dingtalk
 
 import (
 	"bytes"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"time"
+
 	// "log"
 )
 
@@ -62,6 +68,8 @@ type PayLoad struct {
 type WebHook struct {
 	AccessToken string `json:"accessToken"`
 	APIURL      string `json:"apiUrl"`
+	Sign        string `json:"sign"`
+	Timestamp   int64  `json:"timestamp"`
 }
 
 // Response `DingTalk web hook response struct`
@@ -71,9 +79,14 @@ type Response struct {
 }
 
 // NewWebHook `new a WebHook`
-func NewWebHook(accessToken string) *WebHook {
+func NewWebHook(accessToken string, secret string) *WebHook {
 	baseAPI := "https://oapi.dingtalk.com/robot/send?access_token="
-	return &WebHook{AccessToken: accessToken, APIURL: baseAPI}
+	timestamp := time.Now().UnixNano() / 1e6
+	var sign string
+	if secret != "" {
+		sign = signWebHook(timestamp, secret)
+	}
+	return &WebHook{AccessToken: accessToken, APIURL: baseAPI, Timestamp: timestamp, Sign: sign}
 }
 
 // reset api URL
@@ -84,9 +97,25 @@ func (w *WebHook) resetAPIURL() {
 var regStr = `^1([38][0-9]|14[57]|5[^4])\d{8}$`
 var regPattern = regexp.MustCompile(regStr)
 
+// sign dingtalk webhook
+func signWebHook(timestamp int64, secret string) string {
+	string_to_sign := fmt.Sprintf("%v\n%s", timestamp, secret)
+	h := getHmacCode(string_to_sign, secret)
+	return base64.StdEncoding.EncodeToString(h)
+}
+
+// HmacSHA256
+func getHmacCode(s string, b string) []byte {
+	h := hmac.New(sha256.New, []byte(b))
+	io.WriteString(h, s)
+	return h.Sum(nil)
+}
+
 //  real send request to api
 func (w *WebHook) sendPayload(payload *PayLoad) error {
-	apiURL := w.APIURL + w.AccessToken
+	//apiURL := w.APIURL + w.AccessToken
+	apiURL := fmt.Sprintf("%v%v&timestamp=%v&sign=%v", w.APIURL, w.AccessToken, w.Timestamp, w.Sign)
+
 	//  get config
 	bs, _ := json.Marshal(payload)
 	//  request api

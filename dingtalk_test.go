@@ -5,52 +5,10 @@ import (
 )
 
 func TestWebHook(t *testing.T) {
-	webHook := NewWebHook("example-access-token")
-	payLoad := &PayLoad{}
-
-	webHook.APIURL = ""
-	err := webHook.sendPayload(payLoad)
-	if nil == err {
-		t.Error("api request error should be catch!")
-	}
-
-	webHook.APIURL = "http://google.com/"
-	err = webHook.sendPayload(payLoad)
-	if nil == err {
-		t.Error("api response error should be catch!")
-	}
-
-	webHook.AccessToken = ""
-	err = webHook.sendPayload(payLoad)
-	if nil == err {
-		t.Error("json unmarshal error should be catch!")
-	}
-
-	webHook.APIURL = "http://ip.360.cn/IPShare/info"
-	err = webHook.sendPayload(payLoad)
-	if nil != err {
-		t.Error(err)
-	}
-
-	webHook.APIURL = "http://ip.cip.cc/"
-	err = webHook.sendPayload(payLoad)
-	if nil == err {
-		t.Error("response struct error should be catch!")
-	}
-
-	webHook.resetAPIURL()
-	webHook.AccessToken = "example-access-token"
-	payLoad = &PayLoad{
-		MsgType: "text",
-		Text: struct {
-			Content string `json:"content"`
-		}{
-			Content: "test msg",
-		},
-	}
+	webHook := NewWebHook("foo","bar")
 
 	// test send text message
-	err = webHook.SendTextMsg("Test text message", false, "")
+	err := webHook.SendTextMsg("Test text message", false, "")
 	if nil == err {
 		t.Error("token missing error should be catch!")
 	}
