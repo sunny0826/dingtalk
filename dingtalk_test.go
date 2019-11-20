@@ -1,4 +1,5 @@
 package dingtalk
+
 /*
 Copyright © 2019 Guo Xudong
 
@@ -20,7 +21,7 @@ import (
 )
 
 func TestWebHook(t *testing.T) {
-	webHook := NewWebHook("foo","bar")
+	webHook := NewWebHook("foo", "bar")
 
 	// test send text message
 	err := webHook.SendTextMsg("Test text message", false, "")

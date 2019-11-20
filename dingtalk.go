@@ -1,4 +1,5 @@
 package dingtalk
+
 /*
 Copyright © 2019 Guo Xudong
 
@@ -28,8 +29,6 @@ import (
 	"net/http"
 	"regexp"
 	"time"
-
-	// "log"
 )
 
 // LinkMsg `link message struct`
