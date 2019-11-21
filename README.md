@@ -17,7 +17,7 @@ go get -u github.com/sunny0826/dingtalk
 
     ![](dosc/image/WX20191121-092710.png)
     
-    Copy webhook and get `https://oapi.dingtalk.com/robot/send?access_token={YOUR_TOKEN}`,`{TOUR_TOKEN}` is your token.
+    Copy webhook and get `https://oapi.dingtalk.com/robot/send?access_token={YOUR_TOKEN}`,`{TOUR_TOKEN}` is the token.
 
 2. get sign
     
