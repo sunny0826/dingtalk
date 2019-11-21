@@ -40,10 +40,22 @@ import (
 func main() {
 	webHook := dingtalk.NewWebHook("YOUR_DINGTALK_TOKEN", "YOUR_DINGTALK_SIGN")
 
-	// test send text message
+	// send text message
 	err := webHook.SendTextMsg("Test text message", false, "")
 	if nil != err {
 		t.Error("token missing error should be catch!")
 	}
+    
+    // send link message
+    err = webHook.SendLinkMsg("A link message", "Click me to baidu search", "", "https://www.baidu.com")
+    if nil != err {
+        t.Error("token missing error should be catch!")
+    }
+
+    // send markdown message
+    err = webHook.SendMarkdownMsg("A markdown message", "# This is title \n > Hello World", false, "13800138000")
+    if nil != err {
+        t.Error("token missing error should be catch!")
+    }
 }
 ```
