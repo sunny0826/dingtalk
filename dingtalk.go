@@ -24,7 +24,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -112,17 +111,12 @@ var regStr = `^1([38][0-9]|14[57]|5[^4])\d{8}$`
 var regPattern = regexp.MustCompile(regStr)
 
 // sign dingtalk webhook
-func signWebHook(timestamp int64, secret string) string {
-	signString := fmt.Sprintf("%v\n%s", timestamp, secret)
-	h := getHmacCode(signString, secret)
-	return base64.StdEncoding.EncodeToString(h)
-}
-
-// HmacSHA256
-func getHmacCode(s string, b string) []byte {
-	h := hmac.New(sha256.New, []byte(b))
-	io.WriteString(h, s)
-	return h.Sum(nil)
+func signWebHook(t int64, secret string) string {
+	strToHash := fmt.Sprintf("%d\n%s", t, secret)
+	hmac256 := hmac.New(sha256.New, []byte(secret))
+	hmac256.Write([]byte(strToHash))
+	data := hmac256.Sum(nil)
+	return base64.StdEncoding.EncodeToString(data)
 }
 
 //  real send request to api
