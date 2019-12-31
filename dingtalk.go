@@ -122,7 +122,12 @@ func signWebHook(t int64, secret string) string {
 //  real send request to api
 func (w *WebHook) sendPayload(payload *PayLoad) error {
 	//apiURL := w.APIURL + w.AccessToken
-	apiURL := fmt.Sprintf("%v%v&timestamp=%v&sign=%v", w.APIURL, w.AccessToken, w.Timestamp, w.Sign)
+	var apiURL string
+	if w.Sign != "" {
+		apiURL = fmt.Sprintf("%v%v&timestamp=%v&sign=%v", w.APIURL, w.AccessToken, w.Timestamp, w.Sign)
+	}else {
+		apiURL = fmt.Sprintf("%v%v", w.APIURL, w.AccessToken)
+	}
 
 	//  get config
 	bs, _ := json.Marshal(payload)
