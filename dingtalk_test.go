@@ -22,7 +22,7 @@ import (
 )
 
 func TestWebHook(t *testing.T) {
-	webHook := NewWebHook("", "")
+	webHook := NewWebHook("1db8b12b67f2c483ab5555a13b66c41322cb488865602bd811b410a5da8e94b6", "")
 
 	//test send text message
 	err := webHook.SendTextMsg("Test text message", false, "")

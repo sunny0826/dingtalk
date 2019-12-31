@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -134,7 +135,15 @@ func (w *WebHook) sendPayload(payload *PayLoad) error {
 	//  request api
 	// log.Println(string(bs))
 
-	resp, err := http.Post(apiURL, "application/json", bytes.NewReader(bs))
+	timeout := time.Duration(10 * time.Second) //超时时间50ms
+	client  := &http.Client{
+		Timeout: timeout,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+	resp, err := client.Post(apiURL, "application/json", bytes.NewReader(bs))
+	//resp, err := http.Post(apiURL, "application/json", bytes.NewReader(bs))
 
 	if nil != err {
 		return errors.New("api request error: " + err.Error())
